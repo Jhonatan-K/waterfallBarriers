@@ -1,63 +1,73 @@
 # hallar el indice del valor máximo y valor mínimo
-def find_next_max(curr_idx, current_list):
-    current_value = current_list[curr_idx] # valor en el indice dentro de la lista
+
+
+
+from collections import Counter
+
+def calculate_uneven_staircase(current_index, current_list):
+    # en el caso de una escalera irregular
+    current_value = current_list[current_index] # valor en el indice dentro de la lista
     for i, v in enumerate(current_list):
-        if (i <= curr_idx):
+        if (i <= current_index):
             continue
         if (v > current_value):
             return [i, v]
-        
+    # en un caso como 9-4-5 ignorara el 4 para sumar el total de 9+5+2 espacios= 10    
     return [-1, -1] # retornar un indices inexistentes
 #
-#
-def calculate_total(start,end):
+def filter_list_from_interval(start,end):
     total = 0 # para partir de 0
-    # print('calculate_total', start, end)
-    s = min(start, end) ## inicio del rango 
-    e = max(start, end) ## fin del rango
+    s = min(start, end) ## s = a Start o inicio 
+    e = max(start, end) ## e = a End o fin
     list = [] # lista vacía donde irán los valores filtrados
+    
     for i,v in enumerate(barriers): # filtrar valores por indices <<
-        if i < s: # ignorar lo que este antes del principio
+        if i < s: # ignorar lo que este antes del principio (start)
             continue
-        if i > e: # ignorar lo que este después del final
+        if i > e: # ignorar lo que este después del final (end)
             break
-        list.append(v) # filtrando lista 
-        
-    if (start > end):
-        list.reverse() # invertir el orden de la lista en caso de que el indice start sea mayor que end
-    #9-8-5-1    
-    jump = 0
-    for i,c in enumerate(list):
-        if i <= jump: # para tener un previo y un actual y comparar con
+        list.append(v) # filtrando lista [1,5,8,9,4,5] a [1,5,8,9]
+    return list
+#
+def reverse_list(list):
+    #[1, 5, 8, 9]
+    if (list[-1] > list[0]): # invertir el orden de la lista en caso de que el indice start sea mayor que end
+        list.reverse() 
+    return list # [9, 8, 5, 1]       
+#
+def calculate_max_water(list):
+    # recorrido y suma
+    water = 0
+    index_jump = 0
+    for i,current_index in enumerate(list): # para tener un previo y un actual y comparar
+        if i <= index_jump: # la iteración es menor o igual que el salto?
             continue
-        p = list[i-1] # p valor en indice anterior al indice actual
-        next_max_value = find_next_max(i, list) # <<<<<<<<<
+        previous_index = list[i-1] # previous_index valor en indice anterior al indice actual
+        #
+        # 
+        # en caso de una escalera irregular <==============
+        next_max_value = calculate_uneven_staircase(i, list) # <<<<<<<<<
         if next_max_value[0] > -1: # en el caso de escaleras con desniveles (9,4,2,8,1)
             spaces = (next_max_value[0] - i) + 1 # se suma 1 para contar el espacio inicial
-            total += next_max_value[1] * spaces # para saltar un valor menor y multiplicar el siguiente
-            jump = next_max_value[0]
+            water += next_max_value[1] * spaces # para saltar un valor menor y multiplicar el siguiente
+            index_jump = next_max_value[0]            
         else:
-            total += min(c, p) # agrega al contador total el valor menor entre c y p
-    
-    return total # total de agua maxima 
-#    
+            water += min(current_index, previous_index) # agrega al contador total el valor menor entre current index y previous value <-----------------
+    return water # total de agua maxima 
 #
 #
-# Lista inicial <<
+# Lista inicial <<<<<<<<<<<<<<<<<<<<<<
 barriers = [1,5,8,9,4,5]
-#
-#
+
 print(barriers)
 print()
-#
-#
+
 # Valores mínimos y máximos con sus indices
 max_value = None
 max_value_index = None
 min_value = None
 min_value_index = None
-#
-#
+
 # iterar entre la lista para encontrar mínimos y máximos <<
 for i, v in enumerate(barriers): # itero entre indice y valor dentro de la lista <<
     if max_value is None or v > max_value:
@@ -68,15 +78,18 @@ for i, v in enumerate(barriers): # itero entre indice y valor dentro de la lista
         min_value = v
         min_value_index = i
         # mientras el valor mínimo sea none o valor iterado sea mayor que valor máximo, le dare de valor máximo ese valor iterado <<
-#
-# total = a la función de encontrar el total de agua maxima a partir de indices mínimos y máximos <<
-total = calculate_total(max_value_index, min_value_index)
+
+filtered_barriers = filter_list_from_interval(max_value_index, min_value_index) # [1, 5, 8, 9]
+
+reverse_barriers = reverse_list(filtered_barriers) # [9, 8, 5, 1]
+
+max_water = calculate_max_water(reverse_barriers)
+
 print()
+
 # Resultados de hallazgo de mínimos y máximos <<
 print(f'{max_value_index} es el la posición maxima y {max_value} es el valor máximo\n{min_value_index} es la posición minima y {min_value} es el valor mínimo')
 print()
-print(f'{total} es la capacidad maxima de agua entre {max_value} y {min_value}')
-##
-##                 
-##
-##
+# resultado final
+print(f'{max_water} es la capacidad maxima de agua entre el {max_value} y el {min_value} en la lista {barriers}')
+
