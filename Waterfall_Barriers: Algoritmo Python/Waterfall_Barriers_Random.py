@@ -14,7 +14,7 @@ def calculate_uneven_staircase(current_index, current_list):
     # en un caso como 9-4-5 ignorara el 4 para sumar el total de 9+5+2 espacios= 10    
     return [-1, -1] # retornar un indices inexistentes
 #
-def filtering_list(start,end):
+def filter_list_from_interval(start,end):
     total = 0 # para partir de 0
     s = min(start, end) ## s = a Start o inicio 
     e = max(start, end) ## e = a End o fin
@@ -79,7 +79,7 @@ for i, v in enumerate(barriers): # itero entre indice y valor dentro de la lista
         min_value_index = i
         # mientras el valor mínimo sea none o valor iterado sea mayor que valor máximo, le dare de valor máximo ese valor iterado <<
 
-filtered_barriers = filtering_list(max_value_index, min_value_index)
+filtered_barriers = filter_list_from_interval(max_value_index, min_value_index)
 
 reverse_barriers = reverse_list(filtered_barriers)
 
